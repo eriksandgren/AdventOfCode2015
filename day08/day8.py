@@ -1,44 +1,6 @@
 #!/usr/bin/env python
 import sys
-
-bannedStrings = ["ab", "cd", "pq", "xy"]
-def containsBanned(inpStr):
-  for s in bannedStrings:
-    if s in inpStr:
-      return True
-  return False
-
-def containsRepetition(inpStr):
-  stringLen = len(inpStr)
-  for s1,s2 in zip(inpStr[0:-1], inpStr[1:]):
-    if s1 == s2:
-      return True
-  return False
-
-vowels = "aeiou"
-def containsVowels(inpStr):
-  vowelCnt = 0
-  for c in inpStr:
-    if c in vowels:
-      vowelCnt += 1
-      if vowelCnt == 3:
-        return True
-  return False
-
-def containsRepetition2(inpStr):
-  stringLen = len(inpStr)
-  for i in xrange(0, stringLen - 1):
-    myStr = inpStr[i : i + 2]
-    if myStr in inpStr[:i] or myStr in inpStr[i + 2 :]:
-      return True
-  return False
-
-def containsRepetition3(inpStr):
-  stringLen = len(inpStr)
-  for s1, s2 in zip(inpStr[0:-2], inpStr[2:]):
-    if s1 == s2:
-      return True
-  return False
+import re
 
 def parseInput():
     with open ("input.txt", "r") as myfile:
@@ -46,22 +8,42 @@ def parseInput():
     
     myInput = myInput.split('\n')
     return myInput
+
+def countCharsDecode(s):
+  strLen = len(s)
+  
+  s = s[1:-1]
+  s = re.sub('\\\\\\\\', '_', s)
+  s = re.sub('\\\\x..', ' ', s)
+  s = re.sub('\\\\.', '+', s)
+  memLen = len(s)
+
+  return strLen - memLen
+
+def countCharsEncode(s):
+  strLen = len(s)
+  print s
+  s = re.sub('\\\\', '\\\\\\\\', s)
+  s = re.sub('\\"', '\\\\"', s)
+  s =  "\"" + s + "\""
+  print s
+  memLen = len(s)
+
+  return memLen - strLen 
+
 def part1():
-    my_input = parseInput()
-    niceCount = 0
-    for w in my_input:
-      if not containsBanned(w) and containsRepetition(w) and containsVowels(w):
-        niceCount += 1
-    print niceCount
+  inp = parseInput()
+  tot = 0
+  for string in inp:
+    tot += countCharsDecode(string)
+  print tot
 
 def part2():
-    my_input = parseInput()
-    niceCount = 0
-    for w in my_input:
-      if containsRepetition2(w) and containsRepetition3(w):
-        niceCount += 1
-    print niceCount
-
+  inp = parseInput()
+  tot = 0
+  for string in inp:
+    tot += countCharsEncode(string)
+  print tot
 
 part1()
 part2()
